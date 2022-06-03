@@ -9,14 +9,12 @@ module.exports.initialize = () => {
     fs.readFile('./data/albums.json', 'utf8', (err, data) => {
       if (err) {
         reject(err)
-        console.log(err)
       } else {
 
         albums = JSON.parse(data)
         fs.readFile('./data/genres.json', 'utf8', (err, data) => {
           if (err) {
             reject(err)
-            console.log(err)
           } else {
             genres = JSON.parse(data)
             resolve("SUCCESS")
