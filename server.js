@@ -4,6 +4,8 @@ const app = express()
 const env = require("dotenv")
 env.config()
 
+const path = require("path")
+
 const musicService = require("./musicService")
 
 const HTTP_PORT = process.env.PORT || 8080
@@ -12,8 +14,10 @@ function onHttpStart() {
   console.log("Express server is listening on PORT: " + HTTP_PORT + " 🚀🚀🚀")
 }
 
+app.use(express.static("public"));
+
 app.get("/", (req, res) => {
-  res.send("sound322")
+  res.sendFile(path.join(__dirname, "/views/index.html"))
 })
 
 app.get("/albums", (req, res) => {
@@ -24,6 +28,15 @@ app.get("/albums", (req, res) => {
   .catch((err) => {
     console.log(err)
   })
+})
+
+app.get("/albums/:id", (req, res) => {
+  musicService.getAlbumById(req.params.id).then((album) => {
+    res.json(album)
+  }).catch((err) => {
+    res.json({message: err})
+  })
+
 })
 
 app.get("/genres", (req, res) => {
