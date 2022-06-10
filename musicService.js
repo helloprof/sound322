@@ -25,6 +25,27 @@ module.exports.initialize = () => {
   })
 }
 
+module.exports.getAlbumById = (id) => {
+  return new Promise((resolve, reject) => {
+    for (let i = 0; i < albums.length; i++) {
+      var album;
+      if (albums[i].id == id) {
+        album = albums[i]
+      }
+
+      // // using array function find (single object is returned)
+      // let album = albums.find(album => album.id == id)
+    }
+
+    if(album) {
+      resolve(album)
+    } else {
+      reject("album not found with this ID!")
+    }
+
+  })
+}
+
 // module.exports.getPublishedAlbums = () => {
 //   return new Promise((resolve, reject) => {
 //     let publishedAlbums = []
