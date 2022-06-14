@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>Album Form</h1>
+    <div>
+      <form action="/albums/new" method="POST" enctype="multipart/form-data">
+        <label for="title">Album Title</label>
+        <input id="title" type="text" name="title"/><br />
+        <label for="albumCover">Photo ID</label>
+        <input id="albumCover" type="file" name="albumCover"/><br />
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </body>
+</html>
