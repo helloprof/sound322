@@ -1,0 +1,37 @@
+<div class="container">
+  <form action="/albums/new" method="POST" enctype="multipart/form-data">
+    <fieldset>
+      <legend>New Album</legend>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Enter album title">
+      </div>
+      <div class="form-group">
+        <label for="artist">Artist</label>
+        <input type="text" class="form-control" id="artist" name="artist" placeholder="Enter artist name">
+      </div>
+      <div class="form-group">
+        <label for="year">Year</label>
+        <input type="text" class="form-control" id="year" name="year" placeholder="Enter year produced">
+      </div>
+      <div class="form-group">
+        <label for="single">Single</label>
+        <input type="text" class="form-control" id="single" name="single" placeholder="Enter single song from album">
+      </div>
+      <div class="form-group">
+        <label for="genre">Genre</label>
+        <select class="form-control" id="genre" name="genre">
+          {{#each data}}
+          <option>{{genre}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="albumCover">Album Cover</label>
+        <input type="file" class="form-control" id="albumCover" name="albumCover">
+      </div>
+      </br>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </fieldset>
+  </form>
+</div>
