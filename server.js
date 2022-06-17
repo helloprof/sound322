@@ -67,16 +67,18 @@ app.post("/albums/new", upload.single("albumCover"), (req, res) => {
     }
 
     upload(req).then((uploaded) => {
-      processPost(uploaded.url);
+      processAlbum(uploaded.url);
     });
   } else {
-    processPost("");
+    processAlbum("");
   }
 
-  function processPost(imageUrl) {
+  function processAlbum(imageUrl) {
     req.body.albumCover = imageUrl;
 
-    // TODO: Process the req.body and add it as a new Blog Post before redirecting to /posts
+    musicService.addAlbum(req.body).then(() => {
+      res.redirect("/albums")
+    })
   }
 
 })
