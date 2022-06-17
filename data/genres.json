@@ -10,5 +10,9 @@
   {
     "id": "3",
     "genre": "Rock"
+  },
+  {
+    "id": "4",
+    "genre": "Classical"
   }
 ]
