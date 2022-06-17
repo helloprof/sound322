@@ -43,7 +43,7 @@ app.get("/albums", (req, res) => {
       // res.json(albums)
       res.render("index", {
         data: albums,
-        layout: false
+        layout: "main"
       })
     })
     .catch((err) => {
@@ -93,7 +93,13 @@ app.post("/albums/new", upload.single("albumCover"), (req, res) => {
 })
 
 app.get("/albums/new", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/albumForm.html"))
+  // res.sendFile(path.join(__dirname, "/views/albumForm.html"))
+  musicService.getGenres().then((genresData) => {
+    res.render("albumForm", {
+      data: genresData, 
+      layout: "main"
+    })
+  } )
 })
 
 app.get("/albums/:id", (req, res) => {
