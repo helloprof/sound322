@@ -20,6 +20,10 @@ cloudinary.config({
 
 const upload = multer()
 
+const exphbs = require('express-handlebars')
+app.engine('.hbs', exphbs.engine({ extname: '.hbs' }))
+app.set('view engine', '.hbs')
+
 const HTTP_PORT = process.env.PORT || 8080
 
 function onHttpStart() {
@@ -29,13 +33,18 @@ function onHttpStart() {
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/index.html"))
+  // res.sendFile(path.join(__dirname, "/views/index.html"))
+  res.redirect("/albums")
 })
 
 app.get("/albums", (req, res) => {
   musicService.getAlbums()
     .then((albums) => {
-      res.json(albums)
+      // res.json(albums)
+      res.render("index", {
+        data: albums,
+        layout: false
+      })
     })
     .catch((err) => {
       console.log(err)
@@ -96,6 +105,10 @@ app.get("/albums/:id", (req, res) => {
 })
 
 app.get("/genres", (req, res) => {
+
+  if (req.query.genre) {
+    res.json({GENRE: req.query.genre})
+  } else {
   musicService.getGenres()
     .then((genres) => {
       res.json(genres)
@@ -103,6 +116,7 @@ app.get("/genres", (req, res) => {
     .catch((err) => {
       console.log(err)
     })
+}
 })
 
 app.use((req, res) => {
