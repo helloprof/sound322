@@ -34,32 +34,20 @@
   <div class="container">
 
     <div class="row">
+      {{#each data}}
       <div class="col-sm-6">
         <div class="card">
-          <img src="/covers/graduation.jpeg" class="card-img-top"">
+          <img src="{{albumCover}}" class="card-img-top">
           <div class=" card-body">
-            <h5 class="card-title">Graduation</h5>
-            <h6 class="card-title">Kanye West</h6>
-            <p class="card-text">2007</p>
-            <a href="/albums/1" class="btn btn-primary">More Info</a>
-            <a href="/music/stronger.mp3" class="btn btn-success">Play</a>
-
+            <h5 class="card-title">{{title}}</h5>
+            <h6 class="card-title">{{artist}}</h6>
+            <p class="card-text">{{year}}</p>
+            <a href="/albums/{{id}}" class="btn btn-primary">More Info</a>
+            {{!-- <a href="/music/stronger.mp3" class="btn btn-success">Play</a> --}}
           </div>
         </div>
       </div>
-
-      <div class="col-sm-6">
-        <div class="card">
-          <img src="/covers/thriller.jpeg" class="card-img-top"">
-          <div class=" card-body">
-            <h5 class="card-title">Thriller</h5>
-            <h6 class="card-title">Michael Jackson</h6>
-            <p class="card-text">1982</p>
-            <a href="/albums/3" class="btn btn-primary">More Info</a>
-          </div>
-        </div>
-      </div>
-
+      {{/each}}
     </div>
   </div>
 </body>
