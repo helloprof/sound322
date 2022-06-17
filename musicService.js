@@ -77,3 +77,15 @@ module.exports.getGenres = () => {
     }
   })
 }
+
+module.exports.addAlbum = (album) => {
+  return new Promise((resolve, reject) => {
+    if (album) {
+      album.id = albums.length + 1
+      albums.push(album)
+      resolve("success")
+    } else {
+      reject("no album data available")
+    }
+  })
+}
