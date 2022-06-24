@@ -21,7 +21,12 @@ cloudinary.config({
 const upload = multer()
 
 const exphbs = require('express-handlebars')
-app.engine('.hbs', exphbs.engine({ extname: '.hbs' }))
+app.engine('.hbs', exphbs.engine({ 
+  extname: '.hbs',
+  // layoutsDir: 'views/layouts',
+  // defaultLayout: 'main',
+  // partialsDir: 'views/partials'
+}))
 app.set('view engine', '.hbs')
 
 const HTTP_PORT = process.env.PORT || 8080
@@ -43,7 +48,7 @@ app.get("/albums", (req, res) => {
       // res.json(albums)
       res.render("index", {
         data: albums,
-        layout: "main"
+        layout: 'main'
       })
     })
     .catch((err) => {
@@ -97,7 +102,7 @@ app.get("/albums/new", (req, res) => {
   musicService.getGenres().then((genresData) => {
     res.render("albumForm", {
       data: genresData, 
-      layout: "main"
+      layout: 'main'
     })
   } )
 })
