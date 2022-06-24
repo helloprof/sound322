@@ -9,10 +9,16 @@
           <h6 class="card-title">{{artist}}</h6>
           <p class="card-text">{{year}}</p>
           <a href="/albums/{{id}}" class="btn btn-primary">More Info</a>
+          <a href="/albums?genre={{genre}}" class="btn btn-warning">{{genre}}</a>
           {{!-- <a href="/music/stronger.mp3" class="btn btn-success">Play</a> --}}
         </div>
       </div>
     </div>
     {{/each}}
   </div>
+  {{#unless data}}
+    <div class="col-md-12 text-center">
+      <strong>{{message}}</strong>
+    </div>
+  {{/unless}}
 </div>
