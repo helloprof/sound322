@@ -21,7 +21,7 @@ cloudinary.config({
 const upload = multer()
 
 const exphbs = require('express-handlebars')
-app.engine('.hbs', exphbs.engine({ 
+app.engine('.hbs', exphbs.engine({
   extname: '.hbs',
   // layoutsDir: 'views/layouts',
   // defaultLayout: 'main',
@@ -43,17 +43,33 @@ app.get("/", (req, res) => {
 })
 
 app.get("/albums", (req, res) => {
-  musicService.getAlbums()
-    .then((albums) => {
-      // res.json(albums)
-      res.render("index", {
-        data: albums,
+  if (req.query.genre) {
+    musicService.getAlbumsByGenre(req.query.genre).then((genreAlbums) => {
+      res.render('index', {
+        data: genreAlbums,
         layout: 'main'
       })
-    })
-    .catch((err) => {
+    }).catch((err) => {
       console.log(err)
+      res.render('index', {
+        message: err
+      })
     })
+  } else {
+    musicService.getAlbums()
+      .then((albums) => {
+        // res.json(albums)
+        res.render('index', {
+          data: albums,
+          layout: 'main'
+        })
+      })
+      .catch((err) => {
+        res.render('index', {
+          message: err
+        })
+      })
+  }
 })
 
 app.post("/albums/new", upload.single("albumCover"), (req, res) => {
@@ -101,37 +117,48 @@ app.get("/albums/new", (req, res) => {
   // res.sendFile(path.join(__dirname, "/views/albumForm.html"))
   musicService.getGenres().then((genresData) => {
     res.render("albumForm", {
-      data: genresData, 
+      data: genresData,
       layout: 'main'
     })
-  } )
+  })
 })
 
 app.get("/albums/:id", (req, res) => {
   musicService.getAlbumById(req.params.id).then((album) => {
-    res.json(album)
+    // res.json(album)
+    let tempAlbumArray = []
+    tempAlbumArray.push(album)
+    res.render('index', {
+      data: tempAlbumArray,
+      layout: 'main'
+    })
   }).catch((err) => {
-    res.json({ message: err })
+    res.render('index', 
+    { message: err })
   })
 })
 
 app.get("/genres", (req, res) => {
-
-  if (req.query.genre) {
-    res.json({GENRE: req.query.genre})
-  } else {
   musicService.getGenres()
     .then((genres) => {
-      res.json(genres)
+      // res.json(genres)
+      res.render('genres', {
+        data: genres,
+        layout: 'main'
+      })
     })
     .catch((err) => {
       console.log(err)
+      res.render('genres', {message: err})
     })
-}
 })
 
 app.use((req, res) => {
-  res.status(404).send("Page Not Found")
+  // res.status(404).send("Page Not Found")
+  res.render('404', {
+    data: null,
+    layout: 'main'
+  })
 })
 
 
