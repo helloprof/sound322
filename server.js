@@ -43,22 +43,23 @@ app.get("/", (req, res) => {
 })
 
 app.get("/albums", (req, res) => {
-  if (req.query.genre) {
-    musicService.getAlbumsByGenre(req.query.genre).then((genreAlbums) => {
-      res.render('index', {
-        data: genreAlbums,
-        layout: 'main'
-      })
-    }).catch((err) => {
-      console.log(err)
-      res.render('index', {
-        message: err
-      })
-    })
-  } else {
+  // if (req.query.genre) {
+  //   musicService.getAlbumsByGenre(req.query.genre).then((genreAlbums) => {
+  //     res.render('index', {
+  //       data: genreAlbums,
+  //       layout: 'main'
+  //     })
+  //   }).catch((err) => {
+  //     console.log(err)
+  //     res.render('index', {
+  //       message: err
+  //     })
+  //   })
+  // } else {
     musicService.getAlbums()
       .then((albums) => {
         // res.json(albums)
+        // console.log(albums)
         res.render('index', {
           data: albums,
           layout: 'main'
@@ -69,7 +70,7 @@ app.get("/albums", (req, res) => {
           message: err
         })
       })
-  }
+  // }
 })
 
 app.post("/albums/new", upload.single("albumCover"), (req, res) => {
@@ -115,42 +116,51 @@ app.post("/albums/new", upload.single("albumCover"), (req, res) => {
 
 app.get("/albums/new", (req, res) => {
   // res.sendFile(path.join(__dirname, "/views/albumForm.html"))
-  musicService.getGenres().then((genresData) => {
-    res.render("albumForm", {
-      data: genresData,
-      layout: 'main'
-    })
-  })
+  res.render('albumForm')
+  // musicService.getGenres().then((genresData) => {
+  //   res.render("albumForm", {
+  //     data: genresData,
+  //     layout: 'main'
+  //   })
+  // })
 })
 
-app.get("/albums/:id", (req, res) => {
-  musicService.getAlbumById(req.params.id).then((album) => {
-    // res.json(album)
-    let tempAlbumArray = []
-    tempAlbumArray.push(album)
-    res.render('index', {
-      data: tempAlbumArray,
-      layout: 'main'
-    })
+// app.get("/albums/:id", (req, res) => {
+//   musicService.getAlbumById(req.params.id).then((album) => {
+//     // res.json(album)
+//     let tempAlbumArray = []
+//     tempAlbumArray.push(album)
+//     res.render('index', {
+//       data: tempAlbumArray,
+//       layout: 'main'
+//     })
+//   }).catch((err) => {
+//     res.render('index', 
+//     { message: err })
+//   })
+// })
+
+// app.get("/genres", (req, res) => {
+//   musicService.getGenres()
+//     .then((genres) => {
+//       // res.json(genres)
+//       res.render('genres', {
+//         data: genres,
+//         layout: 'main'
+//       })
+//     })
+//     .catch((err) => {
+//       console.log(err)
+//       res.render('genres', {message: err})
+//     })
+// })
+
+app.get('/albums/delete/:id', (req, res) => {
+  musicService.deleteAlbum(req.params.id).then(() => {
+    res.redirect('/albums')
   }).catch((err) => {
-    res.render('index', 
-    { message: err })
+    res.status(500).send("ALBUM DELETE FAILURE")
   })
-})
-
-app.get("/genres", (req, res) => {
-  musicService.getGenres()
-    .then((genres) => {
-      // res.json(genres)
-      res.render('genres', {
-        data: genres,
-        layout: 'main'
-      })
-    })
-    .catch((err) => {
-      console.log(err)
-      res.render('genres', {message: err})
-    })
 })
 
 app.use((req, res) => {
