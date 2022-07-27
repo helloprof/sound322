@@ -9,13 +9,16 @@
           <tr>
             <th scope="col">ID</th>
             <th scope="col">Genre</th>
+            <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
           {{#each data}}
             <tr>
-              <td>{{id}}</td>
-              <td><a href="/albums?genre={{genre}}">{{genre}}</a></td>
+              <td>{{genreID}}</td>
+              <td><a class="btn btn-warning" href="/albums?genre={{genreID}}">{{genre}}</a></td>
+              <td><a class="btn btn-danger" href="/genres/delete/{{genreID}}">DELETE</a></td>
+
             </tr>
           {{/each}}
         </tbody>
