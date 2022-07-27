@@ -1,0 +1,36 @@
+<div class="container">
+  <form action="/songs/new" method="POST" enctype="multipart/form-data">
+    </br>
+    <fieldset>
+      <legend>New Song</legend>
+
+      <div class="form-group">
+        <label for="albumID">Album</label>
+        <select class="form-control" id="albumID" name="albumID">
+          {{#each data}}
+          <option label="{{title}}">{{albumID}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Enter song title">
+      </div>
+      <div class="form-group">
+        <label for="songFile">Song File Upload</label>
+        <input type="file" class="form-control" id="songFile" name="songFile">
+      </div>
+      <div class="form-group">
+        <label for="single">Song Type:</label>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="single" id="single"> Single
+          </label>
+        </div>
+      </div>
+      </br>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </fieldset>
+  </form>
+</div>
