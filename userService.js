@@ -1,5 +1,6 @@
 var mongoose = require("mongoose")
 var Schema = mongoose.Schema
+const bcrypt = require("bcryptjs")
 
 const env = require("dotenv")
 env.config()
@@ -41,18 +42,46 @@ module.exports.registerUser = function(userData) {
     if(userData.password != userData.password2) {
       reject("PASSWORDS DO NOT MATCH!")
     } else {
-      var newUser = new User(userData)
-      newUser.save((err) => {
-        if(err) {
-          if (err.code == 11000) {
-            reject("USERNAME TAKEN!")
+      bcrypt.hash(userData.password, 10).then((hash) => {
+        userData.password = hash
+        var newUser = new User(userData)
+        newUser.save((err) => {
+          if(err) {
+            if (err.code == 11000) {
+              reject("USERNAME TAKEN!")
+            } else {
+              reject(err)
+            }
           } else {
-            reject(err)
+            resolve()
           }
-        } else {
-          resolve()
-        }
+        })
+      }).catch((error) => {
+        console.log(error)
+        reject("ERROR WITH PASSWORD ENCRYPTION!")
       })
     }
+  })
+}
+
+module.exports.login = function(userData) {
+  return new Promise((resolve, reject) => {
+      User.findOne({username: userData.username})
+      .exec()
+      .then((user) => {
+        if (!user) {
+          reject("UNABLE TO FIND USER: "+ userData.username)
+        } else {
+          bcrypt.compare(userData.password, user.password).then((result) => {
+            if(result === true) {
+              resolve("USER LOGGED IN")
+            } else {
+              reject("UNABLE TO AUTHENTICATE USER: "+ userData.username)
+            }
+          }).catch((error) => {
+            reject("UNABLE TO DECRYPT PASSWORD!")
+          })
+        }
+      })
   })
 }
