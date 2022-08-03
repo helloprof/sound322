@@ -1,5 +1,11 @@
 <div class="container">
     </br>
+  {{#if errorMessage}}
+  <div class="alert alert-danger" role="alert">
+    <strong>ERROR:</strong>
+    {{errorMessage}}
+  </div>
+  {{/if}}
   <form action="/login" method="POST">
     <fieldset>
       <legend>Login</legend>
