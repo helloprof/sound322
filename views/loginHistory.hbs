@@ -1,0 +1,27 @@
+<div class="container">
+  </br>
+  <div class="row">
+    <a href="/logout" class="btn btn-danger">Logout</a>
+    <div class="col-md-12">
+      </br>
+      <h2>{{session.user.username}} - Login History</h2>
+      </hr>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">User Agent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each session.user.loginHistory}}
+          <tr>
+            <td>{{dateTime}}</td>
+            <td>{{userAgent}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
