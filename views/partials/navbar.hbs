@@ -10,8 +10,12 @@
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
                 <a class="nav-link" href="/albums">Albums</a>
                 <a class="nav-link" href="/genres">Genres</a>
-                <a class="nav-link" href="/login">Login</a>
             </div>
         </div>
+        {{#if session.user}}
+        <a class="btn btn-outline-dark my-2 my-sm-0" href="/loginHistory">{{session.user.username}}</a>
+        {{else}}
+        <a class="btn btn-outline-dark my-2 my-sm-0" href="/login">Login</a>
+        {{/if}}
     </div>
 </nav>
