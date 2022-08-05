@@ -4,6 +4,8 @@ const app = express()
 const env = require("dotenv")
 env.config()
 
+const clientSessions = require("client-sessions")
+
 const path = require("path")
 const musicService = require("./musicService")
 const userService = require("./userService")
@@ -31,6 +33,26 @@ app.engine('.hbs', exphbs.engine({
 }))
 app.set('view engine', '.hbs')
 
+app.use(clientSessions({
+  cookieName: "session",
+  secret: "week12sound322example123456705082022",
+  duration: 2 * 60 * 1000,
+  activeDuration: 60 * 1000
+}))
+
+app.use(function(req, res, next) {
+  res.locals.session = req.session;
+  next()
+})
+
+function ensureLogin(req, res, next) {
+  if (!req.session.user) {
+    res.redirect("/login");
+  } else {
+    next();
+  }
+}
+
 const HTTP_PORT = process.env.PORT || 8080
 
 function onHttpStart() {
@@ -44,7 +66,7 @@ app.get("/", (req, res) => {
   res.redirect("/albums")
 })
 
-app.get("/albums", (req, res) => {
+app.get("/albums", ensureLogin, (req, res) => {
   if (req.query.genre) {
     musicService.getAlbumsByGenre(req.query.genre).then((genreAlbums) => {
       res.render('index', {
@@ -60,6 +82,8 @@ app.get("/albums", (req, res) => {
   } else {
     musicService.getAlbums()
       .then((albums) => {
+        console.log("ALBUMS HERE:")
+        console.log(albums)
         res.render('index', {
           data: albums,
           layout: 'main'
@@ -73,7 +97,7 @@ app.get("/albums", (req, res) => {
   }
 })
 
-app.post("/albums/new", upload.single("albumCover"), (req, res) => {
+app.post("/albums/new", ensureLogin, upload.single("albumCover"), (req, res) => {
   if (req.file) {
     let streamUpload = (req) => {
       return new Promise((resolve, reject) => {
@@ -114,7 +138,7 @@ app.post("/albums/new", upload.single("albumCover"), (req, res) => {
 
 })
 
-app.get("/albums/new", (req, res) => {
+app.get("/albums/new", ensureLogin, (req, res) => {
   musicService.getGenres().then((genresData) => {
     res.render("albumForm", {
       data: genresData,
@@ -123,7 +147,7 @@ app.get("/albums/new", (req, res) => {
   })
 })
 
-app.get("/albums/:id", (req, res) => {
+app.get("/albums/:id", ensureLogin, (req, res) => {
   musicService.getAlbumById(req.params.id).then((album) => {
     res.render('index', {
       data: album,
@@ -135,7 +159,7 @@ app.get("/albums/:id", (req, res) => {
   })
 })
 
-app.get("/genres", (req, res) => {
+app.get("/genres", ensureLogin, (req, res) => {
   musicService.getGenres().then((genres) => {
       res.render('genres', {
         data: genres,
@@ -148,7 +172,7 @@ app.get("/genres", (req, res) => {
     })
 })
 
-app.get('/albums/delete/:id', (req, res) => {
+app.get('/albums/delete/:id', ensureLogin, (req, res) => {
   musicService.deleteAlbum(req.params.id).then(() => {
     res.redirect('/albums')
   }).catch((err) => {
@@ -156,11 +180,11 @@ app.get('/albums/delete/:id', (req, res) => {
   })
 })
 
-app.get("/genres/new", (req, res) => {
+app.get("/genres/new", ensureLogin, (req, res) => {
   res.render('genreForm')
 })
 
-app.post("/genres/new", (req, res) => {
+app.post("/genres/new", ensureLogin, (req, res) => {
   musicService.addGenre(req.body).then(() => {
     res.redirect('/genres')
   }).catch((err) => { 
@@ -168,7 +192,7 @@ app.post("/genres/new", (req, res) => {
   })
 })
 
-app.get('/genres/delete/:id', (req, res) => {
+app.get('/genres/delete/:id', ensureLogin, (req, res) => {
   musicService.deleteGenre(req.params.id).then(() => {
     res.redirect('/genres')
   }).catch((err) => {
@@ -176,7 +200,7 @@ app.get('/genres/delete/:id', (req, res) => {
   })
 })
 
-app.get("/songs/new", (req, res) => {
+app.get("/songs/new", ensureLogin, (req, res) => {
   musicService.getAlbums().then((albums) => {
     res.render("songForm", {
       data: albums,
@@ -185,7 +209,7 @@ app.get("/songs/new", (req, res) => {
   })
 })
 
-app.post("/songs/new", upload.single("songFile"), (req, res) => {
+app.post("/songs/new", ensureLogin, upload.single("songFile"), (req, res) => {
   if (req.file) {
     let streamUpload = (req) => {
       return new Promise((resolve, reject) => {
@@ -221,14 +245,14 @@ app.post("/songs/new", upload.single("songFile"), (req, res) => {
   function processSong(imageUrl) {
     req.body.songFile = imageUrl;
 
-    musicService.addSong(req.body).then(() => {
-      var songRoute = path.join("/songs",req.body.albumID)
-      res.redirect(songRoute)
+    musicService.addSong(req.body).then((albumID) => {
+      // var songRoute = path.join("/songs",req.body.albumID)
+      res.redirect(`/songs/${albumID}`)
     })
   }
 })
 
-app.get("/songs/:albumID", (req, res) => {
+app.get("/songs/:albumID", ensureLogin, (req, res) => {
   musicService.getSongs(req.params.albumID).then((songs) => {
     res.render("songs", {
       data: songs,
@@ -237,9 +261,9 @@ app.get("/songs/:albumID", (req, res) => {
   })
 })
 
-app.get('/songs/delete/:id', (req, res) => {
-  musicService.deleteSong(req.params.id).then(() => {
-    res.redirect('/songs')
+app.get('/songs/delete/:id', ensureLogin, (req, res) => {
+  musicService.deleteSong(req.params.id).then((albumID) => {
+    res.redirect(`/songs/${albumID}`)
   }).catch((err) => {
     res.status(500).send("SONG DELETE FAILURE")
   })
@@ -268,7 +292,15 @@ app.get("/login", (req, res) => {
 })
 
 app.post("/login", (req, res) => {
-  userService.login(req.body).then((data) => {
+  req.body.userAgent = req.get('User-Agent')
+  userService.loginUser(req.body).then((user) => {
+    // session stuff
+    req.session.user = {
+      username: user.username,
+      email: user.email,
+      loginHistory: user.loginHistory
+    }
+    console.log(req.session.user)
     res.redirect('/albums')
   }).catch((error) => { 
     console.log(error)
@@ -278,6 +310,15 @@ app.post("/login", (req, res) => {
   })
 })
 
+app.get("/loginHistory", ensureLogin, (req, res) => {
+  res.render("loginHistory")
+})
+
+app.get("/logout", ensureLogin, (req, res) => {
+  req.session.reset()
+  res.redirect("/login")
+})
+
 app.use((req, res) => {
   // res.status(404).send("Page Not Found")
   res.render('404', {
@@ -285,7 +326,6 @@ app.use((req, res) => {
     layout: 'main'
   })
 })
-
 
 musicService.initialize()
 .then(userService.initialize)
