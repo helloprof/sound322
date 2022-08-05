@@ -66,8 +66,26 @@ module.exports.initialize = () => {
 
 module.exports.getAlbums = () => {
   return new Promise((resolve, reject) => {
-    Album.findAll().then((data) => {
-      resolve(data)
+    Album.findAll().then((albumData) => {
+      // buggy!
+      // console.log("hello?")
+      // console.log(albumData[0])
+      // for (var i = 0; i < albumData.length; i++) {
+      //   Genre.findOne({
+      //     where: {
+      //       genreID: albumData[i].genreID
+      //     }
+      //   }).then((genreData) => {
+      //     console.log("here's genre data")
+      //     console.log(genreData.genre)
+      //     console.log(albumData[i])
+      //     albumData[i].genre = genreData.genre
+      //     console.log(albumData)
+      //   }).catch((err) => {
+      //     reject("GENRE ID INVALID")
+      //   })
+      // }
+      resolve(albumData)
     }).catch((err) => {
       reject("Albums not available")
     })
