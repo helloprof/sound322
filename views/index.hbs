@@ -1,14 +1,17 @@
 <div class="container">
+  </br>
   <div class="row">
+    <a href="/albums/new" class="btn btn-light">Add Album</a>
     {{#each data}}
     <div class="col-sm-6">
+      </br>
       <div class="card">
         <img src="{{albumCover}}" class="card-img-top">
         <div class=" card-body">
           <h5 class="card-title">{{title}}</h5>
           <h6 class="card-title">{{artist}}</h6>
           <p class="card-text">{{year}}</p>
-          <a href="/songs/{{albumID}}" class="btn btn-primary">Play Songs</a>
+          <a href="/songs/{{albumID}}" class="btn btn-primary">Songs</a>
           {{#if genreID}}
             <a href="/albums?genre={{genreID}}" class="btn btn-warning">{{genreID}}</a>
           {{/if}}
