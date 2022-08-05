@@ -64,7 +64,7 @@ module.exports.registerUser = function(userData) {
   })
 }
 
-module.exports.login = function(userData) {
+module.exports.loginUser = function(userData) {
   return new Promise((resolve, reject) => {
       User.findOne({username: userData.username})
       .exec()
@@ -74,7 +74,18 @@ module.exports.login = function(userData) {
         } else {
           bcrypt.compare(userData.password, user.password).then((result) => {
             if(result === true) {
-              resolve("USER LOGGED IN")
+              // session stuff
+              // console.log(user)
+              user.loginHistory.push({dateTime: new Date(), userAgent: userData.userAgent})
+              User.updateOne({username: user.username}, 
+                {$set: { loginHistory: user.loginHistory}}
+              ).exec()
+              .then(() => {
+                resolve(user)
+              })  
+              .catch((err) => {
+                reject("ERROR UPDATING THE USER'S LOGIN HISTORY")
+              })            
             } else {
               reject("UNABLE TO AUTHENTICATE USER: "+ userData.username)
             }
