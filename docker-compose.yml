@@ -1,0 +1,18 @@
+version: "3"
+
+services: 
+  mongo: 
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb:/data/db
+
+  express:
+    image: sound322-express
+    container_name: express
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/usr/src/app
